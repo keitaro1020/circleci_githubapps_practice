@@ -13,6 +13,9 @@ jobs:
             go test -v ./...
             make build
             ls
+            mkdir -p /tmp/build
+            cp -pr ./bin/* /tmp/build
+            ls -lR /tmp/build
       - persist_to_workspace:
           root: /go/src/github.com/keitaro1020/circleci_githubapps_practice
           paths:
