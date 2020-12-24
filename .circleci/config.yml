@@ -57,6 +57,7 @@ jobs:
               -H "Authorization: Bearer $GITHUB_APP_JWT" \
               -H "Accept: application/vnd.github.v3+json" \
               https://api.github.com/app/installations/13706525/access_tokens | jq .token | sed 's/\"//g'`
+            echo $CIRCLE_TAG
             ../github-release upload \
               --user keitaro1020 \
               --repo circleci_githubapps_practice
