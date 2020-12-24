@@ -4,7 +4,7 @@ orbs:
 jobs:
   build:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/golang:latest
     working_directory: /go/src/github.com/keitaro1020/circleci_githubapps_practice
     steps:
       - checkout
@@ -15,40 +15,53 @@ jobs:
             go test -v ./...
             make build
             mkdir -p /tmp/build
-            cp -pr ./bin /tmp/build
+            cp -pr ./bin /tmp/work/build
             ls -lR /tmp/build
       - persist_to_workspace:
-          root: /tmp/build
+          root: /tmp/work/
           paths:
             - ./*
+  download_github_release:
+    docker:
+      - image: circleci/golang:latest
+    steps:
+      - checkout
+      - run:
+          name: download_github_release
+          command: |
+            go get github.com/github-release/github-release
+            cp /go/bin/github-release /tmp/work/
+      - persist_to_workspace:
+          root: /tmp/work/
+          paths:
+            - ./github-release
   release:
     docker:
       - image: circleci/ruby:2.7.2
     steps:
       - checkout
       - attach_workspace:
-          at: /tmp/build
+          at: /tmp/work
       - run:
           name: release
           command: |
-            cp -pr /tmp/build/bin .
+            cp -pr /tmp/work/build/bin .
+            cp -pr /tmp/work/github-release .
             zip -r release.zip ./bin
             cd scripts
             echo $GITHUB_APPS_PEM_BASE64 | base64 --decode > ./private.pem
             bundle install --path vendor/bundle
             GITHUB_APP_JWT=`ruby ./get_jws.rb`
-            GITHUB_TOKEN=`curl -X POST \
+            export GITHUB_TOKEN=`curl -X POST \
               -H "Authorization: Bearer $GITHUB_APP_JWT" \
               -H "Accept: application/vnd.github.v3+json" \
               https://api.github.com/app/installations/13706525/access_tokens | jq .token | sed 's/\"//g'`
-            RELEASE_ID=`curl -sL "https://$GITHUB_TOKEN@api.github.com/repos/keitaro1020/circleci_githubapps_practice/releases/tags/${CIRCLE_TAG}" | jq .id`
-            echo $RELEASE_ID
-            curl \
-              -X POST \
-              -H "Accept: application/vnd.github.v3+json" \
-              -F upfile=@../release.zip \
-              "https://${GITHUB_TOKEN}@api.github.com/repos/keitaro1020/circleci_githubapps_practice/releases/${RELEASE_ID}/assets"
-
+            github-release upload \
+              --user keitaro1020 \
+              --repo circleci_githubapps_practice
+              --tag ${CIRCLE_TAG} \
+              --name "release_bin.zip" \
+              --file ./release.zip
 
 workflows:
   version: 2
