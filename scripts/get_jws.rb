@@ -1,3 +1,5 @@
+require "bundler/setup"
+
 require 'openssl'
 require 'jwt'  # https://rubygems.org/gems/jwt
 

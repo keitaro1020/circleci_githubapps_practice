@@ -30,8 +30,10 @@ jobs:
           name: release
           command: |
             cp -pr /tmp/build/bin .
-            echo $GITHUB_APPS_PEM_BASE64 | base64 --decode > ./scripts/private.pem
-            ruby ./scripts/get_jws.rb
+            cd scripts
+            echo $GITHUB_APPS_PEM_BASE64 | base64 --decode > ./private.pem
+            bundle install --path vendor/bundle
+            ruby ./get_jws.rb
 workflows:
   version: 2
   build_and_release:
