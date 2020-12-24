@@ -25,7 +25,8 @@ jobs:
     docker:
       - image: circleci/golang:latest
     steps:
-      - checkout
+      - attach_workspace:
+          at: /tmp/work
       - run:
           name: download_github_release
           command: |
