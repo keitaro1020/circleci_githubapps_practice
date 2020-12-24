@@ -19,7 +19,7 @@ jobs:
             - ./*
   release:
     docker:
-      - image: circleci/ruby:2.7.3
+      - image: circleci/ruby:2.7.2
     steps:
       - attach_workspace:
           at: /go/src/github.com/keitaro1020/circleci_githubapps_practice
