@@ -29,9 +29,8 @@ jobs:
       - run:
           name: release
           command: |
-            echo $GITHUB_APPS_PEM_BASE64 | base64 --decode > private.pem
-            wc -l private.pem
-            ls
+            cp -pr /tmp/build/bin .
+            echo $GITHUB_APPS_PEM_BASE64 | base64 --decode > ./scripts/private.pem
 workflows:
   version: 2
   build_and_release:
