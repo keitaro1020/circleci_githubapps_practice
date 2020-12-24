@@ -16,7 +16,7 @@ jobs:
             make build
             mkdir -p /tmp/work/build
             cp -pr ./bin /tmp/work/build
-            ls -lR /tmp/build
+            ls -lR /tmp/work
       - persist_to_workspace:
           root: /tmp/work/
           paths:
