@@ -71,9 +71,17 @@ workflows:
           filters:
             tags:
               only: /^v.+$/
-      - release:
+      - download_github_release:
           requires:
             - build
+          filters:
+            branches:
+              ignore: /.*/
+            tags:
+              only: /^v.+$/
+      - release:
+          requires:
+            - download_github_release
           filters:
             branches:
               ignore: /.*/
