@@ -1,0 +1,15 @@
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.9
+    working_directory: /go/src/github.com/keitaro1020/circleci_githubapps_practice
+    steps:
+      - checkout
+      - run:
+          name: build
+          command: |
+            go get -v -t -d ./...
+            go test -v ./...
+            make build
+            ls
