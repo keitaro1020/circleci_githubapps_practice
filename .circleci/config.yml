@@ -27,7 +27,7 @@ jobs:
       - run:
           name: release
           command: |
-            echo $GITHUB_APPS_PRIVATE_PEM > private.pem
+            echo GITHUB_APPS_PEM_BASE64 | base64 --decode > private.pem
             wc -l private.pem
             ls
 workflows:
