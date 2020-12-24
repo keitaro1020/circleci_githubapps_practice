@@ -19,7 +19,7 @@ jobs:
             - ./*
   release:
     docker:
-      - image: circleci/golang:1.9
+      - image: circleci/ruby:2.7.2
     working_directory: /go/src/github.com/keitaro1020/circleci_githubapps_practice
     steps:
       - attach_workspace:
@@ -27,6 +27,8 @@ jobs:
       - run:
           name: release
           command: |
+            echo $GITHUB_APPS_PRIVATE_PEM > private.pem
+            wc -l private.pem
             ls
 workflows:
   version: 2
