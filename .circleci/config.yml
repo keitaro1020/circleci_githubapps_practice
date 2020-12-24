@@ -32,16 +32,23 @@ jobs:
           name: release
           command: |
             cp -pr /tmp/build/bin .
+            zip -r release.zip ./bin
             cd scripts
             echo $GITHUB_APPS_PEM_BASE64 | base64 --decode > ./private.pem
             bundle install --path vendor/bundle
             GITHUB_APP_JWT=`ruby ./get_jws.rb`
-            echo $GITHUB_APP_JWT
             GITHUB_TOKEN=`curl -X POST \
               -H "Authorization: Bearer $GITHUB_APP_JWT" \
               -H "Accept: application/vnd.github.v3+json" \
               https://api.github.com/app/installations/13706525/access_tokens | jq .token | sed 's/\"//g'`
-            echo $GITHUB_TOKEN
+            RELEASE_ID=`curl -sL "https://$GITHUB_TOKEN@api.github.com/repos/keitaro1020/circleci_githubapps_practice/releases/tags/${CIRCLE_TAG}" | jq .id`
+            echo $RELEASE_ID
+            curl \
+              -X POST \
+              -H "Accept: application/vnd.github.v3+json" \
+              -F upfile=@../release.zip \
+              "https://${GITHUB_TOKEN}@api.github.com/repos/keitaro1020/circleci_githubapps_practice/releases/${RELEASE_ID}/assets"
+
 
 workflows:
   version: 2
