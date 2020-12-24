@@ -1,4 +1,6 @@
 version: 2
+orbs:
+  jq: circleci/jq@2.2.0
 jobs:
   build:
     docker:
@@ -33,7 +35,14 @@ jobs:
             cd scripts
             echo $GITHUB_APPS_PEM_BASE64 | base64 --decode > ./private.pem
             bundle install --path vendor/bundle
-            ruby ./get_jws.rb
+            GITHUB_APP_JWT=`ruby ./get_jws.rb`
+            echo $GITHUB_APP_JWT
+            GITHUB_TOKEN = `curl -X POST \
+              -H "Authorization: Bearer $GITHUB_APP_JWT" \
+              -H "Accept: application/vnd.github.v3+json" \
+              https://api.github.com/app/installations/13706525/access_tokens | jq .token`
+            echo $GITHUB_TOKEN
+
 workflows:
   version: 2
   build_and_release:
