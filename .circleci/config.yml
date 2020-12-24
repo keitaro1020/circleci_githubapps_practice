@@ -13,3 +13,18 @@ jobs:
             go test -v ./...
             make build
             ls
+  release:
+    docker:
+      - image: circleci/golang:1.9
+    working_directory: /go/src/github.com/keitaro1020/circleci_githubapps_practice
+    steps:
+      - run:
+          name: release
+          command: |
+            ls
+workflows:
+  version: 2
+  build_and_release:
+    jobs:
+      - build
+      - release
