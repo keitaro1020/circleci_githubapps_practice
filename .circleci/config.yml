@@ -53,12 +53,13 @@ jobs:
             echo $GITHUB_APPS_PEM_BASE64 | base64 --decode > ./private.pem
             bundle install --path vendor/bundle
             GITHUB_APP_JWT=`ruby ./get_jws.rb`
+            cd ..
             export GITHUB_TOKEN=`curl -X POST \
               -H "Authorization: Bearer $GITHUB_APP_JWT" \
               -H "Accept: application/vnd.github.v3+json" \
               https://api.github.com/app/installations/13706525/access_tokens | jq .token | sed 's/\"//g'`
             echo $CIRCLE_TAG
-            ../github-release upload \
+            ./github-release upload \
               --user keitaro1020 \
               --repo circleci_githubapps_practice \
               --tag ${CIRCLE_TAG} \
