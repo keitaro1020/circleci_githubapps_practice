@@ -37,6 +37,9 @@ workflows:
   build_and_release:
     jobs:
       - build
+          filters:
+            tags:
+              only: /^v.+$/
       - release:
           requires:
             - build
