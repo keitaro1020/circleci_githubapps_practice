@@ -60,7 +60,7 @@ jobs:
             echo $CIRCLE_TAG
             ../github-release upload \
               --user keitaro1020 \
-              --repo circleci_githubapps_practice
+              --repo circleci_githubapps_practice \
               --tag ${CIRCLE_TAG} \
               --name "release_bin.zip" \
               --file ./release.zip
