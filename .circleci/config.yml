@@ -12,9 +12,11 @@ jobs:
             go get -v -t -d ./...
             go test -v ./...
             make build
-            ls
+            mkdir -p /tmp/build
+            cp -pr ./bin /tmp/build
+            ls -lR /tmp/build
       - persist_to_workspace:
-          root: /go/src/github.com/keitaro1020/circleci_githubapps_practice
+          root: /tmp/build
           paths:
             - ./*
   release:
@@ -23,7 +25,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: /go/src/github.com/keitaro1020/circleci_githubapps_practice
+          at: /tmp/build
       - run:
           name: release
           command: |
